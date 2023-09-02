@@ -90,6 +90,10 @@ fn projectile_physics(initial_state: State, dt: f64, t_max: f64) -> Vec<State> {
         // Update the position
         state_vec[i].x = state_vec[i-1].x + state_vec[i-1].vx * dt;
         state_vec[i].y = state_vec[i-1].y + state_vec[i-1].vy * dt;
+        if state_vec[i].y <= 0.0 {
+            state_vec[i].y = 0.0;
+            state_vec[i].vy = 0.0;
+        }
 
         // Update the velocity
         state_vec[i].vx = state_vec[i-1].vx + state_vec[i-1].ax * dt;
@@ -177,10 +181,14 @@ mod test {
         
         use plotly::{Plot, Scatter};
         let mut plot = Plot::new();
-        let trace = Scatter::new(state_vec.iter().map(|state| state.x).collect(), state_vec.iter().map(|state| state.y).collect());
+        let trace = Scatter::new(
+            state_vec.iter().map(|state| state.x).collect(), 
+            state_vec.iter().map(|state| state.y).collect()
+        );
         plot.add_trace(trace);
         plot.write_html("out.html");
         plot.show();
+
         // // Check that the last state has the correct x position
         // assert_eq!(state_vec[9999].x, 0.0);
 
@@ -214,6 +222,6 @@ mod test {
 }
 
 
-fn main() {
-    // Usage example (assuming proper implementations for State, Segment, and Vehicle)
+fn main() -> std::io::Result<()> {
+    Ok(())
 }
